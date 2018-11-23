@@ -15,6 +15,7 @@ using System.Linq.Expressions;
 using System.Dynamic;
 using System.Threading.Tasks;
 using CsvHelper.Expressions;
+using System.Data;
 
 namespace CsvHelper
 {
@@ -1253,6 +1254,24 @@ namespace CsvHelper
 				yield return record;
 			}
 		}
+
+		public virtual void Fill(DataTable dt)
+		{
+			Read();
+			ReadHeader();
+			while (Read())
+			{
+				var row = dt.NewRow();
+				foreach (DataColumn column in dt.Columns)
+				{
+					row[column.ColumnName] = GetField(column.DataType, column.ColumnName);
+				}
+
+				dt.Rows.Add();
+			}
+		}
+
+		
 
 		/// <summary>
 		/// Gets the index of the field at name if found.
